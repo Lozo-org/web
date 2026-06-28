@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 17Lud Studio
 
-## Getting Started
+Portfolio personnel premium pour presenter des creations de bots Discord, des services custom et des exemples de projets comme QUP MANA, QUP Commu, QUP MANS et QUP CORE.
 
-First, run the development server:
+## Lancer le site
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvre ensuite `http://127.0.0.1:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Configuration
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+La cle 21st.dev reste uniquement en variable d'environnement locale ou dans les variables du provider de deploiement.
 
-## Learn More
+```bash
+API_KEY_21ST="[COLLER_TA_CLE_API_ICI]"
+21ST_API_KEY=""
+```
 
-To learn more about Next.js, take a look at the following resources:
+Ne mets jamais `.env.local` dans Git. Le frontend ne lit pas `API_KEY_21ST` ou `21ST_API_KEY`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Ou modifier le contenu
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Branding personnel : `src/lib/site-content.ts`, objet `brand`.
+- Services : `src/lib/site-content.ts`, tableau `services`.
+- Projets / exemples de bots : `src/lib/site-content.ts`, tableau `projects`.
+- Contact direct : `src/lib/site-content.ts`, objet `brand`, et `src/components/site/contact-actions.tsx`.
+- Hero 3D : `src/components/site/hero-scene.tsx`.
+- Configuration 21st.dev : `src/lib/magic-21st.ts` et `.env.local`.
+- Direction artistique : `docs/design-system.md`.
 
-## Deploy on Vercel
+## Contact
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Le site utilise un contact simple :
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Discord : `17lud`
+- Email : `ludofootball@icloud.com`
+
+Il n'y a pas de backend de formulaire a configurer pour cette version.
+
+## Verifications
+
+```bash
+npm run lint
+npm run build
+```
+

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   AlertCircle,
@@ -15,6 +15,8 @@ import { buttonVariants } from "@/components/ui/button";
 import { siteContent } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "./language-provider";
+import { useToast } from "./toast";
+import { PREFILL_CONTACT, type PrefillDetail } from "./configurator";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -31,11 +33,32 @@ export function ContactForm() {
 
   const [status, setStatus] = useState<Status>("idle");
   const [copied, setCopied] = useState(false);
+  const toast = useToast();
+  const messageRef = useRef<HTMLTextAreaElement>(null);
+  const serverRef = useRef<HTMLSelectElement>(null);
+
+  useEffect(() => {
+    function onPrefill(event: Event) {
+      const detail = (event as CustomEvent<PrefillDetail>).detail;
+      if (!detail) return;
+      setStatus("idle");
+      window.setTimeout(() => {
+        if (messageRef.current) messageRef.current.value = detail.message;
+        if (serverRef.current && detail.serverType) {
+          serverRef.current.value = detail.serverType;
+        }
+        messageRef.current?.focus();
+      }, 60);
+    }
+    window.addEventListener(PREFILL_CONTACT, onPrefill);
+    return () => window.removeEventListener(PREFILL_CONTACT, onPrefill);
+  }, []);
 
   async function copyDiscord() {
     try {
       await navigator.clipboard.writeText(brand.discord);
       setCopied(true);
+      toast(`${brand.discord} ✓`);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
       setCopied(false);
@@ -64,7 +87,12 @@ export function ContactForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
-      setStatus(response.ok ? "success" : "error");
+      if (response.ok) {
+        setStatus("success");
+        toast(form.successTitle);
+      } else {
+        setStatus("error");
+      }
     } catch {
       setStatus("error");
     }
@@ -147,6 +175,7 @@ export function ContactForm() {
               {form.serverType}
             </label>
             <select
+              ref={serverRef}
               id="cf-server"
               name="serverType"
               defaultValue={form.serverTypeOptions[0]}
@@ -183,6 +212,7 @@ export function ContactForm() {
             {form.message}
           </label>
           <textarea
+            ref={messageRef}
             id="cf-message"
             name="message"
             required

@@ -10,7 +10,7 @@ export const buttonVariants = cva(
         primary:
           "bg-white text-zinc-950 shadow-[0_0_34px_rgba(246,246,247,0.18)] hover:bg-zinc-200",
         secondary:
-          "border border-white/15 bg-white/[0.06] text-white backdrop-blur-xl hover:border-white/55 hover:bg-white/[0.1]",
+          "btn-shine border border-white/15 bg-white/[0.06] text-white backdrop-blur-xl hover:border-white/55 hover:bg-white/[0.1]",
         ghost:
           "text-zinc-200 hover:bg-white/[0.08] hover:text-white",
       },

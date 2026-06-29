@@ -14,6 +14,7 @@ import {
   Check,
   ChevronDown,
   ChevronRight,
+  Command,
   Mail,
   Menu,
   MessageCircle,
@@ -33,13 +34,21 @@ import {
   Wrench,
 } from "lucide-react";
 import { AnimatedSection } from "@/components/site/animated-section";
+import { CommandPalette, OPEN_COMMAND_PALETTE } from "@/components/site/command-palette";
+import { Configurator } from "@/components/site/configurator";
 import { ContactForm } from "@/components/site/contact-form";
 import { CountUp } from "@/components/site/count-up";
 import { Faq } from "@/components/site/faq";
+import { FloatingContact } from "@/components/site/floating-contact";
 import { HeroScene } from "@/components/site/hero-scene";
 import { MotionCard } from "@/components/site/interactive-card";
+import { Magnetic } from "@/components/site/magnetic";
 import { Marquee } from "@/components/site/marquee";
+import { MusicToggle } from "@/components/site/music-toggle";
+import { Object3D } from "@/components/site/object-3d";
 import { RotatingText } from "@/components/site/rotating-text";
+import { ScrambleText } from "@/components/site/scramble-text";
+import { SplitText } from "@/components/site/split-text";
 import { CurrencyToggle } from "@/components/site/currency-toggle";
 import { useCurrency } from "@/components/site/currency-provider";
 import { LanguageToggle } from "@/components/site/language-toggle";
@@ -48,7 +57,7 @@ import { LogoMark, Wordmark } from "@/components/site/logo";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/site/reveal";
 import { ViewTransitions } from "@/components/site/view-transitions";
 import { buttonVariants } from "@/components/ui/button";
-import { siteContent, type SiteContent } from "@/lib/site-content";
+import { siteContent, type Locale, type SiteContent } from "@/lib/site-content";
 import { cn } from "@/lib/utils";
 
 const iconMap: Record<string, LucideIcon> = {
@@ -125,13 +134,17 @@ export default function Home() {
       <ServicesSection c={c} />
       <MarqueeBand c={c} />
       <ProjectsSection c={c} />
+      <ShowcaseSection lang={lang} />
       <PricingSection c={c} />
+      <ConfiguratorSection c={c} />
       <WhySection c={c} />
       <ProcessSection c={c} />
       <FaqSection c={c} />
       <ContactSection c={c} />
       <Footer c={c} />
       <BackToTop label={c.ui.backToTop} />
+      <FloatingContact />
+      <CommandPalette />
     </main>
   );
 }
@@ -178,6 +191,15 @@ function Navbar({ c, active }: { c: SiteContent; active: string }) {
         </div>
 
         <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new Event(OPEN_COMMAND_PALETTE))}
+            aria-label="Recherche rapide (Ctrl/Cmd + K)"
+            className="hidden h-9 items-center gap-1.5 rounded-full border border-white/12 bg-white/[0.06] px-3 text-xs font-medium text-zinc-400 transition duration-200 hover:border-white/30 hover:text-white lg:inline-flex"
+          >
+            <Command className="h-3.5 w-3.5" aria-hidden="true" />K
+          </button>
+          <MusicToggle />
           <LanguageToggle />
           <a
             href="#contact"
@@ -248,7 +270,7 @@ function Hero({ c }: { c: SiteContent }) {
           </StaggerItem>
           <StaggerItem>
             <h1 className="font-display text-4xl font-semibold leading-[1.12] sm:text-6xl lg:text-7xl">
-              <span className="text-white">{c.hero.titleLead}</span>{" "}
+              <SplitText text={c.hero.titleLead} className="text-white" />{" "}
               <RotatingText words={c.hero.rotating} className="text-premium" />
             </h1>
           </StaggerItem>
@@ -259,14 +281,18 @@ function Hero({ c }: { c: SiteContent }) {
           </StaggerItem>
           <StaggerItem>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href="#projets" className={buttonVariants({ variant: "primary", size: "lg" })}>
-                {c.hero.primaryCta}
-                <ArrowRight className="h-5 w-5" aria-hidden="true" />
-              </a>
-              <a href="#contact" className={buttonVariants({ variant: "secondary", size: "lg" })}>
-                {c.hero.secondaryCta}
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-              </a>
+              <Magnetic>
+                <a href="#projets" className={buttonVariants({ variant: "primary", size: "lg" })}>
+                  {c.hero.primaryCta}
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#contact" className={buttonVariants({ variant: "secondary", size: "lg" })}>
+                  {c.hero.secondaryCta}
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                </a>
+              </Magnetic>
             </div>
           </StaggerItem>
         </StaggerGroup>
@@ -332,6 +358,54 @@ function FaqSection({ c }: { c: SiteContent }) {
           description={c.faq.description}
         />
         <Faq items={c.faq.items} />
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function ConfiguratorSection({ c }: { c: SiteContent }) {
+  return (
+    <AnimatedSection id="configurateur" className="glow-soft py-20 sm:py-28">
+      <div className="section-shell">
+        <SectionHeading
+          eyebrow={c.configurator.eyebrow}
+          title={c.configurator.title}
+          description={c.configurator.description}
+        />
+        <Configurator />
+      </div>
+    </AnimatedSection>
+  );
+}
+
+function ShowcaseSection({ lang }: { lang: Locale }) {
+  const isFr = lang === "fr";
+  return (
+    <AnimatedSection className="bg-[#040407] py-20 sm:py-28">
+      <div className="section-shell grid items-center gap-10 lg:grid-cols-2">
+        <Reveal>
+          <p className="text-sm font-semibold uppercase text-zinc-300">
+            {isFr ? "Savoir-faire" : "Craft"}
+          </p>
+          <h2 className="mt-3 font-display text-3xl font-semibold leading-[1.15] text-white sm:text-5xl">
+            {isFr
+              ? "Des systèmes pensés comme de vrais produits."
+              : "Systems built like real products."}
+          </h2>
+          <p className="mt-5 text-base leading-7 text-zinc-300 sm:text-lg">
+            {isFr
+              ? "Architecture propre, interfaces soignées, détails maîtrisés — jusqu'au moindre bouton Discord."
+              : "Clean architecture, polished interfaces, every detail handled — down to the last Discord button."}
+          </p>
+          <p className="mt-4 font-mono text-sm text-zinc-500">
+            {isFr ? "↔ Glisse l'objet pour le faire tourner." : "↔ Drag the object to rotate it."}
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="aspect-square w-full sm:aspect-[4/3]">
+            <Object3D className="h-full w-full" />
+          </div>
+        </Reveal>
       </div>
     </AnimatedSection>
   );
@@ -617,6 +691,7 @@ function WhySection({ c }: { c: SiteContent }) {
 }
 
 function ProcessSection({ c }: { c: SiteContent }) {
+  const reduceMotion = useReducedMotion();
   return (
     <AnimatedSection id="processus" className="bg-[#050509] py-20 sm:py-28">
       <div className="section-shell">
@@ -626,21 +701,31 @@ function ProcessSection({ c }: { c: SiteContent }) {
           description={c.process.description}
         />
 
-        <StaggerGroup className="mt-12 grid gap-4 lg:grid-cols-6">
-          {c.process.steps.map((step, index) => (
-            <StaggerItem key={step.title} className="h-full">
-              <article className="relative h-full rounded-lg border border-white/10 bg-white/[0.045] p-5">
-                <div className="mb-7 flex h-10 w-10 items-center justify-center rounded-lg border border-white/25 bg-white font-mono text-sm font-semibold text-black">
-                  {index + 1}
-                </div>
-                <h3 className="font-display text-lg font-semibold text-white">
-                  {step.title}
-                </h3>
-                <p className="mt-3 text-sm leading-6 text-zinc-300">{step.text}</p>
-              </article>
-            </StaggerItem>
-          ))}
-        </StaggerGroup>
+        <div className="relative mt-12">
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-x-0 top-[42px] hidden h-px origin-left bg-gradient-to-r from-white/5 via-white/40 to-white/5 lg:block"
+            initial={reduceMotion ? false : { scaleX: 0 }}
+            whileInView={reduceMotion ? undefined : { scaleX: 1 }}
+            viewport={{ once: true, amount: 0.4 }}
+            transition={{ duration: 1.1, ease: [0.16, 1, 0.3, 1] }}
+          />
+          <StaggerGroup className="grid gap-4 lg:grid-cols-6">
+            {c.process.steps.map((step, index) => (
+              <StaggerItem key={step.title} className="h-full">
+                <article className="relative h-full rounded-lg border border-white/10 bg-white/[0.045] p-5">
+                  <div className="mb-7 flex h-10 w-10 items-center justify-center rounded-lg border border-white/25 bg-white font-mono text-sm font-semibold text-black">
+                    {index + 1}
+                  </div>
+                  <h3 className="font-display text-lg font-semibold text-white">
+                    {step.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-zinc-300">{step.text}</p>
+                </article>
+              </StaggerItem>
+            ))}
+          </StaggerGroup>
+        </div>
       </div>
     </AnimatedSection>
   );
@@ -797,9 +882,11 @@ function SectionHeading({
 }) {
   return (
     <Reveal className={cn("max-w-3xl", align === "center" && "mx-auto text-center")}>
-      <p className="text-sm font-semibold uppercase text-zinc-300">{eyebrow}</p>
+      <p className="text-sm font-semibold uppercase text-zinc-300">
+        <ScrambleText text={eyebrow} />
+      </p>
       <h2 className="mt-3 font-display text-3xl font-semibold leading-[1.15] text-white sm:text-5xl">
-        {title}
+        <SplitText text={title} />
       </h2>
       <p className="mt-5 text-base leading-7 text-zinc-300 sm:text-lg">{description}</p>
     </Reveal>

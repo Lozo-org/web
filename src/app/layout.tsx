@@ -1,10 +1,16 @@
 import type { Metadata } from "next";
 import { DM_Sans, Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { Analytics } from "@vercel/analytics/next";
 import { CurrencyProvider } from "@/components/site/currency-provider";
 import { LanguageProvider } from "@/components/site/language-provider";
+import { CustomCursor } from "@/components/site/custom-cursor";
+import { IntroPreloader } from "@/components/site/intro-preloader";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SpotlightCursor } from "@/components/site/spotlight-cursor";
+import { ToastProvider } from "@/components/site/toast";
+import { TransitionVeil } from "@/components/site/transition-veil";
+import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +29,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://17lud.studio"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: "17Lud Studio - Bots Discord custom",
     template: "%s | 17Lud Studio",
@@ -44,17 +50,49 @@ export const metadata: Metadata = {
     "QUP Mans",
     "QUP Core",
   ],
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
     title: "17Lud Studio - Bots Discord custom",
     description:
       "Des systemes Discord sur mesure pour automatiser, moderer et faire evoluer ton serveur.",
-    images: ["/images/qup-bots-hero-dashboard.png"],
+    url: SITE_URL,
+    siteName: "17Lud Studio",
+    locale: "fr_FR",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "17Lud Studio - Bots Discord custom",
+    description:
+      "Des systemes Discord sur mesure pour automatiser, moderer et faire evoluer ton serveur.",
   },
   robots: {
     index: true,
     follow: true,
   },
+};
+
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: "17Lud Studio",
+  description:
+    "Createur de bots Discord custom : moderation, tickets, logs, IA, automatisation, RP, esport et communautes.",
+  url: SITE_URL,
+  image: `${SITE_URL}/logo.png`,
+  areaServed: "Worldwide",
+  serviceType: "Discord bot development",
+  knowsAbout: [
+    "Discord bots",
+    "Discord.js",
+    "Moderation",
+    "Automation",
+    "Esport",
+    "Roleplay",
+  ],
+  founder: { "@type": "Person", name: "17Lud" },
 };
 
 export default function RootLayout({
@@ -68,14 +106,23 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dmSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <IntroPreloader />
+        <div className="grain" aria-hidden="true" />
+        <CustomCursor />
         <LanguageProvider>
           <CurrencyProvider>
             <ScrollProgress />
             <SpotlightCursor />
-            {children}
+            <TransitionVeil />
+            <ToastProvider>{children}</ToastProvider>
           </CurrencyProvider>
         </LanguageProvider>
         <SpeedInsights />
+        <Analytics />
       </body>
     </html>
   );

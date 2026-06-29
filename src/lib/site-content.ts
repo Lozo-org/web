@@ -166,6 +166,19 @@ export type SiteContent = {
     bannerTitle: string;
     bannerCta: string;
   };
+  configurator: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    typeLabel: string;
+    featuresLabel: string;
+    recommendedLabel: string;
+    ctaLabel: string;
+    emptyHint: string;
+    prefillIntro: string;
+    types: string[];
+    features: string[];
+  };
   faq: {
     eyebrow: string;
     title: string;
@@ -606,6 +619,33 @@ const fr: SiteContent = {
     bannerTitle:
       "Envoie-moi ton idée, je regarde comment la transformer en bot concret.",
     bannerCta: "Envoyer un email",
+  },
+  configurator: {
+    eyebrow: "Configurateur",
+    title: "Compose ton bot en 30 secondes.",
+    description:
+      "Choisis le type de serveur et les fonctionnalités : je te propose l'offre adaptée et je pré-remplis le formulaire.",
+    typeLabel: "Type de serveur",
+    featuresLabel: "Fonctionnalités",
+    recommendedLabel: "Offre recommandée",
+    ctaLabel: "Demander ce devis",
+    emptyHint: "Choisis au moins une fonctionnalité pour voir l'offre recommandée.",
+    prefillIntro: "Voici la configuration de bot que je veux :",
+    types: ["Communauté", "Esport / Gaming", "RP", "Entreprise / Pro", "Autre"],
+    features: [
+      "Modération",
+      "Tickets",
+      "Logs",
+      "AutoMod",
+      "Mini-jeux",
+      "Esport / Mans",
+      "RP",
+      "IA",
+      "Base de données",
+      "Dashboard",
+      "Automatisations",
+      "Multi-serveurs",
+    ],
   },
   faq: {
     eyebrow: "FAQ",
@@ -1063,6 +1103,33 @@ const en: SiteContent = {
     bannerEyebrow: "Your next Discord system",
     bannerTitle: "Send me your idea — I'll look at how to turn it into a real bot.",
     bannerCta: "Send an email",
+  },
+  configurator: {
+    eyebrow: "Configurator",
+    title: "Build your bot in 30 seconds.",
+    description:
+      "Pick your server type and the features: I suggest the right offer and pre-fill the form.",
+    typeLabel: "Server type",
+    featuresLabel: "Features",
+    recommendedLabel: "Recommended offer",
+    ctaLabel: "Request this quote",
+    emptyHint: "Pick at least one feature to see the recommended offer.",
+    prefillIntro: "Here is the bot setup I want:",
+    types: ["Community", "Esport / Gaming", "RP", "Business / Pro", "Other"],
+    features: [
+      "Moderation",
+      "Tickets",
+      "Logs",
+      "AutoMod",
+      "Mini-games",
+      "Esport / Mans",
+      "RP",
+      "AI",
+      "Database",
+      "Dashboard",
+      "Automations",
+      "Multi-server",
+    ],
   },
   faq: {
     eyebrow: "FAQ",

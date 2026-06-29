@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans, Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { CurrencyProvider } from "@/components/site/currency-provider";
 import { LanguageProvider } from "@/components/site/language-provider";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import "./globals.css";
@@ -64,8 +65,10 @@ export default function RootLayout({
     >
       <body className="flex min-h-full flex-col">
         <LanguageProvider>
-          <ScrollProgress />
-          {children}
+          <CurrencyProvider>
+            <ScrollProgress />
+            {children}
+          </CurrencyProvider>
         </LanguageProvider>
         <SpeedInsights />
       </body>

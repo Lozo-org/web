@@ -39,9 +39,17 @@ export function HeroScene() {
     const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let reduceMotion = reduceMotionQuery.matches;
     let animationFrame = 0;
+    let running = false;
+    let inView = true;
     let previousTime = performance.now();
 
-    // Pointer parallax target (normalised -1..1) and smoothed value.
+    // Cached scroll metrics — reading scrollHeight every frame forces reflow.
+    let scrollY = window.scrollY;
+    let maxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+
     const pointer = { x: 0, y: 0 };
     const parallax = { x: 0, y: 0 };
 
@@ -85,7 +93,6 @@ export function HeroScene() {
     );
     group.add(wire);
 
-    // Inner solid core for extra depth and specular highlights.
     const core = new THREE.Mesh(
       new THREE.IcosahedronGeometry(0.82, 1),
       new THREE.MeshStandardMaterial({
@@ -119,7 +126,6 @@ export function HeroScene() {
     smokeRing.rotation.set(0.88, 0.28, 0.46);
     group.add(smokeRing);
 
-    // Third tilted ring for a richer orbital feel.
     const outerRing = new THREE.Mesh(
       new THREE.TorusGeometry(1.95, 0.006, 16, 160),
       new THREE.MeshStandardMaterial({
@@ -156,7 +162,7 @@ export function HeroScene() {
     });
 
     // Floating particle field for depth (monochrome).
-    const particleCount = 340;
+    const particleCount = 200;
     const positions = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i += 1) {
       const radius = 3 + Math.random() * 6;
@@ -211,11 +217,15 @@ export function HeroScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      maxScroll = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      if (reduceMotion) renderer.render(scene, camera);
     }
 
     function scrollProgress() {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      return Math.min(Math.max(window.scrollY / max, 0), 1);
+      return Math.min(Math.max(scrollY / maxScroll, 0), 1);
     }
 
     function handlePointerMove(event: PointerEvent) {
@@ -223,12 +233,15 @@ export function HeroScene() {
       pointer.y = (event.clientY / window.innerHeight) * 2 - 1;
     }
 
+    function handleScroll() {
+      scrollY = window.scrollY;
+    }
+
     function renderFrame(time: number) {
       const delta = Math.min((time - previousTime) / 1000, 0.05);
       previousTime = time;
       const p = reduceMotion ? 0 : Math.min(scrollProgress() * 2.2, 1);
 
-      // Smooth the pointer parallax toward the target.
       const targetX = reduceMotion ? 0 : pointer.x * 0.22;
       const targetY = reduceMotion ? 0 : pointer.y * 0.16;
       parallax.x = THREE.MathUtils.lerp(parallax.x, targetX, 0.05);
@@ -242,16 +255,16 @@ export function HeroScene() {
       group.position.x = THREE.MathUtils.lerp(group.position.x, 2.2 - p * 1.2, 0.055);
       group.position.y = THREE.MathUtils.lerp(group.position.y, 0.08 + p * 0.18, 0.055);
       group.position.z = THREE.MathUtils.lerp(group.position.z, p * 0.5, 0.055);
-      group.rotation.y += reduceMotion ? 0 : delta * (0.34 + p * 0.44);
+      group.rotation.y += delta * (0.34 + p * 0.44);
       group.rotation.x = 0.22 + Math.sin(time * 0.00042) * 0.08 + p * 0.18 + parallax.y;
       group.rotation.z = 0.08 - p * 0.1;
       group.scale.setScalar(THREE.MathUtils.lerp(group.scale.x, 1.05 + p * 0.22, 0.05));
 
-      core.rotation.x -= reduceMotion ? 0 : delta * 0.2;
-      core.rotation.y -= reduceMotion ? 0 : delta * 0.16;
-      outerRing.rotation.z += reduceMotion ? 0 : delta * 0.12;
+      core.rotation.x -= delta * 0.2;
+      core.rotation.y -= delta * 0.16;
+      outerRing.rotation.z += delta * 0.12;
 
-      particles.rotation.y += reduceMotion ? 0 : delta * 0.02;
+      particles.rotation.y += delta * 0.02;
       particles.rotation.x = parallax.y * 0.3;
 
       panels.forEach((panel, index) => {
@@ -262,25 +275,71 @@ export function HeroScene() {
       });
 
       renderer.render(scene, camera);
+      if (running) animationFrame = window.requestAnimationFrame(renderFrame);
+    }
+
+    function start() {
+      // Reduced motion: render a single static frame, no animation loop.
+      if (reduceMotion) {
+        renderer.render(scene, camera);
+        return;
+      }
+      if (running) return;
+      running = true;
+      previousTime = performance.now();
       animationFrame = window.requestAnimationFrame(renderFrame);
+    }
+
+    function stop() {
+      running = false;
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
     }
 
     function handleMotionChange(event: MediaQueryListEvent) {
       reduceMotion = event.matches;
+      if (reduceMotion) {
+        stop();
+        renderer.render(scene, camera);
+      } else if (inView && !document.hidden) {
+        start();
+      }
     }
+
+    function handleVisibility() {
+      if (document.hidden) stop();
+      else if (inView) start();
+    }
+
+    // Pause the render loop whenever the hero leaves the viewport.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        inView = entry?.isIntersecting ?? true;
+        if (inView && !document.hidden) start();
+        else stop();
+      },
+      { threshold: 0 },
+    );
 
     resize();
     renderer.render(scene, camera);
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
     reduceMotionQuery.addEventListener("change", handleMotionChange);
-    animationFrame = window.requestAnimationFrame(renderFrame);
+    document.addEventListener("visibilitychange", handleVisibility);
+    observer.observe(canvasElement);
+    start();
 
     return () => {
-      window.cancelAnimationFrame(animationFrame);
+      stop();
+      observer.disconnect();
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("pointermove", handlePointerMove);
       reduceMotionQuery.removeEventListener("change", handleMotionChange);
+      document.removeEventListener("visibilitychange", handleVisibility);
       disposeObject(scene);
       renderer.dispose();
     };

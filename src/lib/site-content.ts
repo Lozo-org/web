@@ -7,6 +7,10 @@ export type Locale = "fr" | "en";
 export const LOCALES: Locale[] = ["fr", "en"];
 export const DEFAULT_LOCALE: Locale = "fr";
 
+export type Currency = "eur" | "usd" | "cad";
+export const CURRENCIES: Currency[] = ["cad", "eur", "usd"];
+export const DEFAULT_CURRENCY: Currency = "eur";
+
 // Valeurs partagées entre les deux langues (évite la duplication / le décalage).
 const DISCORD = "17lud";
 const EMAIL = "ludofootball@icloud.com";
@@ -32,7 +36,7 @@ export type PriceTier = {
   id: string;
   name: string;
   tagline: string;
-  price: string;
+  price: Record<Currency, string>;
   priceNote: string;
   icon: string;
   featured?: boolean;
@@ -400,7 +404,7 @@ const fr: SiteContent = {
         id: "essentiel",
         name: "Essentiel",
         tagline: "Un module Discord propre et solide.",
-        price: "49 €",
+        price: { eur: "49 €", usd: "55 $US", cad: "75 $CA" },
         priceNote: "à partir de · projet unique",
         icon: "spark",
         features: [
@@ -416,7 +420,7 @@ const fr: SiteContent = {
         id: "sur-mesure",
         name: "Sur Mesure",
         tagline: "Un bot complet pensé autour de ton serveur.",
-        price: "149 €",
+        price: { eur: "149 €", usd: "165 $US", cad: "219 $CA" },
         priceNote: "à partir de · projet unique",
         icon: "bot",
         featured: true,
@@ -435,7 +439,7 @@ const fr: SiteContent = {
         id: "studio",
         name: "Studio",
         tagline: "Système avancé, IA et évolutif.",
-        price: "Sur devis",
+        price: { eur: "Sur devis", usd: "Sur devis", cad: "Sur devis" },
         priceNote: "projet long terme",
         icon: "ai",
         features: [
@@ -798,7 +802,7 @@ const en: SiteContent = {
         id: "essentiel",
         name: "Essential",
         tagline: "One clean, solid Discord module.",
-        price: "€49",
+        price: { eur: "€49", usd: "$55", cad: "C$75" },
         priceNote: "from · one-off project",
         icon: "spark",
         features: [
@@ -814,7 +818,7 @@ const en: SiteContent = {
         id: "sur-mesure",
         name: "Custom",
         tagline: "A complete bot built around your server.",
-        price: "€149",
+        price: { eur: "€149", usd: "$165", cad: "C$219" },
         priceNote: "from · one-off project",
         icon: "bot",
         featured: true,
@@ -833,7 +837,7 @@ const en: SiteContent = {
         id: "studio",
         name: "Studio",
         tagline: "Advanced, AI-driven and scalable.",
-        price: "On quote",
+        price: { eur: "On quote", usd: "On quote", cad: "On quote" },
         priceNote: "long-term project",
         icon: "ai",
         features: [

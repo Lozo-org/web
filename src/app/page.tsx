@@ -35,8 +35,11 @@ import {
 import { AnimatedSection } from "@/components/site/animated-section";
 import { ContactForm } from "@/components/site/contact-form";
 import { HeroScene } from "@/components/site/hero-scene";
+import { CurrencyToggle } from "@/components/site/currency-toggle";
+import { useCurrency } from "@/components/site/currency-provider";
 import { LanguageToggle } from "@/components/site/language-toggle";
 import { useLanguage } from "@/components/site/language-provider";
+import { LogoMark, Wordmark } from "@/components/site/logo";
 import { Reveal, StaggerGroup, StaggerItem } from "@/components/site/reveal";
 import { ViewTransitions } from "@/components/site/view-transitions";
 import { buttonVariants } from "@/components/ui/button";
@@ -133,12 +136,8 @@ function Navbar({ c, active }: { c: SiteContent; active: string }) {
           className="flex min-h-11 items-center gap-3 rounded-full focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
           aria-label={`${c.brand.name} - ${c.nav[0].label}`}
         >
-          <span className="grid h-9 w-9 place-items-center rounded-lg border border-white bg-white font-mono text-sm font-semibold text-black shadow-[0_0_32px_rgba(255,255,255,0.18)]">
-            {c.brand.shortName}
-          </span>
-          <span className="font-display text-base font-semibold text-white">
-            {c.brand.name}
-          </span>
+          <LogoMark className="h-9 w-9 shrink-0 drop-shadow-[0_0_20px_rgba(255,255,255,0.12)]" />
+          <Wordmark className="text-base" />
         </a>
 
         <div className="hidden items-center gap-1 lg:flex">
@@ -292,7 +291,7 @@ function AboutSection({ c }: { c: SiteContent }) {
       <div className="section-shell scene-depth grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <Reveal className="lg:sticky lg:top-24">
           <div
-            className="profile-portrait depth-card aspect-square w-full rounded-2xl border border-white/12"
+            className="profile-portrait aspect-square w-full rounded-2xl border border-white/12"
             style={{ backgroundImage: "url('/images/profile.jpg')" }}
             role="img"
             aria-label={c.about.profileAlt}
@@ -454,6 +453,7 @@ function ProjectsSection({ c }: { c: SiteContent }) {
 }
 
 function PricingSection({ c }: { c: SiteContent }) {
+  const { currency } = useCurrency();
   return (
     <AnimatedSection id="tarifs" className="glow-soft py-20 sm:py-28">
       <div className="section-shell">
@@ -463,7 +463,11 @@ function PricingSection({ c }: { c: SiteContent }) {
           description={c.pricing.description}
         />
 
-        <StaggerGroup className="mt-12 grid gap-4 lg:grid-cols-3 lg:items-stretch">
+        <div className="mt-7 flex justify-center">
+          <CurrencyToggle />
+        </div>
+
+        <StaggerGroup className="mt-10 grid gap-4 lg:grid-cols-3 lg:items-stretch">
           {c.pricing.tiers.map((tier) => {
             const Icon = iconMap[tier.icon] ?? WandSparkles;
             return (
@@ -492,7 +496,7 @@ function PricingSection({ c }: { c: SiteContent }) {
                   <p className="mt-4 text-sm leading-6 text-zinc-300">{tier.tagline}</p>
                   <div className="mt-6 flex items-end gap-2">
                     <span className="font-display text-4xl font-semibold text-white">
-                      {tier.price}
+                      {tier.price[currency]}
                     </span>
                   </div>
                   <p className="mt-1 text-xs uppercase tracking-wide text-zinc-500">
@@ -664,8 +668,11 @@ function Footer({ c }: { c: SiteContent }) {
     <footer className="border-t border-white/10 bg-[#020204] py-10">
       <div className="section-shell flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
         <div>
-          <p className="font-display text-xl font-semibold text-white">{c.brand.name}</p>
-          <p className="mt-2 text-sm text-zinc-400">{c.footer.tagline}</p>
+          <div className="flex items-center gap-3">
+            <LogoMark className="h-9 w-9 shrink-0" />
+            <Wordmark className="text-xl" />
+          </div>
+          <p className="mt-3 text-sm text-zinc-400">{c.footer.tagline}</p>
           <p className="mt-2 text-sm text-zinc-400">
             {c.contact.discordLabel} : {c.brand.discord} · {c.contact.emailLabel} :{" "}
             {c.brand.email}

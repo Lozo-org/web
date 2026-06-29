@@ -6,6 +6,7 @@ import { CurrencyProvider } from "@/components/site/currency-provider";
 import { LanguageProvider } from "@/components/site/language-provider";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SpotlightCursor } from "@/components/site/spotlight-cursor";
+import { ToastProvider } from "@/components/site/toast";
 import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
@@ -110,7 +111,7 @@ export default function RootLayout({
           <CurrencyProvider>
             <ScrollProgress />
             <SpotlightCursor />
-            {children}
+            <ToastProvider>{children}</ToastProvider>
           </CurrencyProvider>
         </LanguageProvider>
         <SpeedInsights />

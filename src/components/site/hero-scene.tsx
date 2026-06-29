@@ -3,12 +3,12 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 
-function addEdges(mesh: THREE.Mesh, color = "#ffffff") {
+function addEdges(mesh: THREE.Mesh, color = "#ffffff", opacity = 0.68) {
   const geometry = new THREE.EdgesGeometry(mesh.geometry, 12);
   const material = new THREE.LineBasicMaterial({
     color,
     transparent: true,
-    opacity: 0.68,
+    opacity,
   });
   const edges = new THREE.LineSegments(geometry, material);
   mesh.add(edges);
@@ -17,12 +17,14 @@ function addEdges(mesh: THREE.Mesh, color = "#ffffff") {
 
 function disposeObject(object: THREE.Object3D) {
   object.traverse((child) => {
-    if (child instanceof THREE.Mesh || child instanceof THREE.LineSegments) {
-      child.geometry?.dispose();
-      const material = child.material;
-      if (Array.isArray(material)) material.forEach((item) => item.dispose());
-      else material?.dispose();
-    }
+    const node = child as THREE.Object3D & {
+      geometry?: THREE.BufferGeometry;
+      material?: THREE.Material | THREE.Material[];
+    };
+    node.geometry?.dispose();
+    const material = node.material;
+    if (Array.isArray(material)) material.forEach((item) => item.dispose());
+    else material?.dispose();
   });
 }
 
@@ -37,7 +39,19 @@ export function HeroScene() {
     const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
     let reduceMotion = reduceMotionQuery.matches;
     let animationFrame = 0;
+    let running = false;
+    let inView = true;
     let previousTime = performance.now();
+
+    // Cached scroll metrics — reading scrollHeight every frame forces reflow.
+    let scrollY = window.scrollY;
+    let maxScroll = Math.max(
+      1,
+      document.documentElement.scrollHeight - window.innerHeight,
+    );
+
+    const pointer = { x: 0, y: 0 };
+    const parallax = { x: 0, y: 0 };
 
     const renderer = new THREE.WebGLRenderer({
       canvas,
@@ -58,6 +72,9 @@ export function HeroScene() {
     const fillLight = new THREE.PointLight("#f6f6f7", 0.45);
     fillLight.position.set(-3, -2, 2);
     scene.add(fillLight);
+    const rimLight = new THREE.PointLight("#ffffff", 0.32);
+    rimLight.position.set(2.5, -1.5, -3);
+    scene.add(rimLight);
 
     const group = new THREE.Group();
     group.position.set(2.2, 0.08, 0);
@@ -75,6 +92,18 @@ export function HeroScene() {
       }),
     );
     group.add(wire);
+
+    const core = new THREE.Mesh(
+      new THREE.IcosahedronGeometry(0.82, 1),
+      new THREE.MeshStandardMaterial({
+        color: "#0c0c10",
+        metalness: 0.6,
+        roughness: 0.35,
+        emissive: "#1a1a1f",
+        emissiveIntensity: 0.4,
+      }),
+    );
+    group.add(core);
 
     const ringMaterial = new THREE.MeshStandardMaterial({
       color: "#ffffff",
@@ -96,6 +125,17 @@ export function HeroScene() {
     );
     smokeRing.rotation.set(0.88, 0.28, 0.46);
     group.add(smokeRing);
+
+    const outerRing = new THREE.Mesh(
+      new THREE.TorusGeometry(1.95, 0.006, 16, 160),
+      new THREE.MeshStandardMaterial({
+        color: "#ffffff",
+        transparent: true,
+        opacity: 0.22,
+      }),
+    );
+    outerRing.rotation.set(-0.4, 0.6, 1.1);
+    group.add(outerRing);
 
     const silver = new THREE.MeshStandardMaterial({
       color: "#f6f6f7",
@@ -120,6 +160,35 @@ export function HeroScene() {
       addEdges(bar);
       group.add(bar);
     });
+
+    // Floating particle field for depth (monochrome).
+    const particleCount = 200;
+    const positions = new Float32Array(particleCount * 3);
+    for (let i = 0; i < particleCount; i += 1) {
+      const radius = 3 + Math.random() * 6;
+      const theta = Math.random() * Math.PI * 2;
+      const phi = Math.acos(2 * Math.random() - 1);
+      positions[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
+      positions[i * 3 + 1] = radius * Math.sin(phi) * Math.sin(theta);
+      positions[i * 3 + 2] = radius * Math.cos(phi) - 2;
+    }
+    const particleGeometry = new THREE.BufferGeometry();
+    particleGeometry.setAttribute(
+      "position",
+      new THREE.BufferAttribute(positions, 3),
+    );
+    const particles = new THREE.Points(
+      particleGeometry,
+      new THREE.PointsMaterial({
+        color: "#ffffff",
+        size: 0.02,
+        transparent: true,
+        opacity: 0.5,
+        sizeAttenuation: true,
+        depthWrite: false,
+      }),
+    );
+    scene.add(particles);
 
     const panels = [0, 1, 2].map((item) => {
       const panel = new THREE.Mesh(
@@ -148,11 +217,24 @@ export function HeroScene() {
       renderer.setSize(width, height, false);
       camera.aspect = width / height;
       camera.updateProjectionMatrix();
+      maxScroll = Math.max(
+        1,
+        document.documentElement.scrollHeight - window.innerHeight,
+      );
+      if (reduceMotion) renderer.render(scene, camera);
     }
 
     function scrollProgress() {
-      const max = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-      return Math.min(Math.max(window.scrollY / max, 0), 1);
+      return Math.min(Math.max(scrollY / maxScroll, 0), 1);
+    }
+
+    function handlePointerMove(event: PointerEvent) {
+      pointer.x = (event.clientX / window.innerWidth) * 2 - 1;
+      pointer.y = (event.clientY / window.innerHeight) * 2 - 1;
+    }
+
+    function handleScroll() {
+      scrollY = window.scrollY;
     }
 
     function renderFrame(time: number) {
@@ -160,18 +242,30 @@ export function HeroScene() {
       previousTime = time;
       const p = reduceMotion ? 0 : Math.min(scrollProgress() * 2.2, 1);
 
-      camera.position.x = THREE.MathUtils.lerp(camera.position.x, p * -0.55, 0.045);
-      camera.position.y = THREE.MathUtils.lerp(camera.position.y, p * 0.22, 0.045);
+      const targetX = reduceMotion ? 0 : pointer.x * 0.22;
+      const targetY = reduceMotion ? 0 : pointer.y * 0.16;
+      parallax.x = THREE.MathUtils.lerp(parallax.x, targetX, 0.05);
+      parallax.y = THREE.MathUtils.lerp(parallax.y, targetY, 0.05);
+
+      camera.position.x = THREE.MathUtils.lerp(camera.position.x, p * -0.55 + parallax.x, 0.045);
+      camera.position.y = THREE.MathUtils.lerp(camera.position.y, p * 0.22 - parallax.y, 0.045);
       camera.position.z = THREE.MathUtils.lerp(camera.position.z, 6 - p * 1.1, 0.045);
       camera.lookAt(0.7 - p * 0.8, 0, 0);
 
       group.position.x = THREE.MathUtils.lerp(group.position.x, 2.2 - p * 1.2, 0.055);
       group.position.y = THREE.MathUtils.lerp(group.position.y, 0.08 + p * 0.18, 0.055);
       group.position.z = THREE.MathUtils.lerp(group.position.z, p * 0.5, 0.055);
-      group.rotation.y += reduceMotion ? 0 : delta * (0.34 + p * 0.44);
-      group.rotation.x = 0.22 + Math.sin(time * 0.00042) * 0.08 + p * 0.18;
+      group.rotation.y += delta * (0.34 + p * 0.44);
+      group.rotation.x = 0.22 + Math.sin(time * 0.00042) * 0.08 + p * 0.18 + parallax.y;
       group.rotation.z = 0.08 - p * 0.1;
       group.scale.setScalar(THREE.MathUtils.lerp(group.scale.x, 1.05 + p * 0.22, 0.05));
+
+      core.rotation.x -= delta * 0.2;
+      core.rotation.y -= delta * 0.16;
+      outerRing.rotation.z += delta * 0.12;
+
+      particles.rotation.y += delta * 0.02;
+      particles.rotation.x = parallax.y * 0.3;
 
       panels.forEach((panel, index) => {
         const offset = index - 1;
@@ -181,23 +275,71 @@ export function HeroScene() {
       });
 
       renderer.render(scene, camera);
+      if (running) animationFrame = window.requestAnimationFrame(renderFrame);
+    }
+
+    function start() {
+      // Reduced motion: render a single static frame, no animation loop.
+      if (reduceMotion) {
+        renderer.render(scene, camera);
+        return;
+      }
+      if (running) return;
+      running = true;
+      previousTime = performance.now();
       animationFrame = window.requestAnimationFrame(renderFrame);
+    }
+
+    function stop() {
+      running = false;
+      if (animationFrame) window.cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
     }
 
     function handleMotionChange(event: MediaQueryListEvent) {
       reduceMotion = event.matches;
+      if (reduceMotion) {
+        stop();
+        renderer.render(scene, camera);
+      } else if (inView && !document.hidden) {
+        start();
+      }
     }
+
+    function handleVisibility() {
+      if (document.hidden) stop();
+      else if (inView) start();
+    }
+
+    // Pause the render loop whenever the hero leaves the viewport.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const entry = entries[0];
+        inView = entry?.isIntersecting ?? true;
+        if (inView && !document.hidden) start();
+        else stop();
+      },
+      { threshold: 0 },
+    );
 
     resize();
     renderer.render(scene, camera);
     window.addEventListener("resize", resize);
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
     reduceMotionQuery.addEventListener("change", handleMotionChange);
-    animationFrame = window.requestAnimationFrame(renderFrame);
+    document.addEventListener("visibilitychange", handleVisibility);
+    observer.observe(canvasElement);
+    start();
 
     return () => {
-      window.cancelAnimationFrame(animationFrame);
+      stop();
+      observer.disconnect();
       window.removeEventListener("resize", resize);
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("pointermove", handlePointerMove);
       reduceMotionQuery.removeEventListener("change", handleMotionChange);
+      document.removeEventListener("visibilitychange", handleVisibility);
       disposeObject(scene);
       renderer.dispose();
     };

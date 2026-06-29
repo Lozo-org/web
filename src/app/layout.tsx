@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { DM_Sans, Geist, Geist_Mono } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { CurrencyProvider } from "@/components/site/currency-provider";
+import { LanguageProvider } from "@/components/site/language-provider";
+import { ScrollProgress } from "@/components/site/scroll-progress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -61,7 +64,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${dmSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        {children}
+        <LanguageProvider>
+          <CurrencyProvider>
+            <ScrollProgress />
+            {children}
+          </CurrencyProvider>
+        </LanguageProvider>
         <SpeedInsights />
       </body>
     </html>

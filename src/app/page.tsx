@@ -34,7 +34,12 @@ import {
 } from "lucide-react";
 import { AnimatedSection } from "@/components/site/animated-section";
 import { ContactForm } from "@/components/site/contact-form";
+import { CountUp } from "@/components/site/count-up";
+import { Faq } from "@/components/site/faq";
 import { HeroScene } from "@/components/site/hero-scene";
+import { MotionCard } from "@/components/site/interactive-card";
+import { Marquee } from "@/components/site/marquee";
+import { RotatingText } from "@/components/site/rotating-text";
 import { CurrencyToggle } from "@/components/site/currency-toggle";
 import { useCurrency } from "@/components/site/currency-provider";
 import { LanguageToggle } from "@/components/site/language-toggle";
@@ -71,6 +76,7 @@ const SECTION_IDS = [
   "projets",
   "tarifs",
   "processus",
+  "faq",
   "contact",
 ];
 
@@ -114,12 +120,15 @@ export default function Home() {
       <ViewTransitions />
       <Navbar c={c} active={active} />
       <Hero c={c} />
+      <MetricsBand c={c} />
       <AboutSection c={c} />
       <ServicesSection c={c} />
+      <MarqueeBand c={c} />
       <ProjectsSection c={c} />
       <PricingSection c={c} />
       <WhySection c={c} />
       <ProcessSection c={c} />
+      <FaqSection c={c} />
       <ContactSection c={c} />
       <Footer c={c} />
       <BackToTop label={c.ui.backToTop} />
@@ -238,8 +247,9 @@ function Hero({ c }: { c: SiteContent }) {
             <p className="mb-3 font-mono text-sm text-zinc-300">{c.brand.name}</p>
           </StaggerItem>
           <StaggerItem>
-            <h1 className="text-premium font-display text-4xl font-semibold leading-[1.08] sm:text-6xl lg:text-7xl">
-              {c.hero.title}
+            <h1 className="font-display text-4xl font-semibold leading-[1.12] sm:text-6xl lg:text-7xl">
+              <span className="text-white">{c.hero.titleLead}</span>{" "}
+              <RotatingText words={c.hero.rotating} className="text-premium" />
             </h1>
           </StaggerItem>
           <StaggerItem>
@@ -282,6 +292,48 @@ function Hero({ c }: { c: SiteContent }) {
         <ChevronDown className="h-4 w-4 animate-float-slow" aria-hidden="true" />
       </div>
     </section>
+  );
+}
+
+function MetricsBand({ c }: { c: SiteContent }) {
+  return (
+    <section className="border-y border-white/10 bg-[#040407] py-10">
+      <StaggerGroup className="section-shell grid grid-cols-2 gap-6 sm:grid-cols-4">
+        {c.metrics.map((metric) => (
+          <StaggerItem key={metric.label} className="text-center">
+            <p className="font-display text-4xl font-semibold tabular-nums text-white sm:text-5xl">
+              <CountUp value={metric.value} suffix={metric.suffix} />
+            </p>
+            <p className="mt-2 text-xs uppercase tracking-[0.15em] text-zinc-400 sm:text-sm">
+              {metric.label}
+            </p>
+          </StaggerItem>
+        ))}
+      </StaggerGroup>
+    </section>
+  );
+}
+
+function MarqueeBand({ c }: { c: SiteContent }) {
+  return (
+    <section className="border-b border-white/10 bg-black py-6" aria-label="Technologies">
+      <Marquee items={c.marquee} />
+    </section>
+  );
+}
+
+function FaqSection({ c }: { c: SiteContent }) {
+  return (
+    <AnimatedSection id="faq" className="py-20 sm:py-28">
+      <div className="section-shell">
+        <SectionHeading
+          eyebrow={c.faq.eyebrow}
+          title={c.faq.title}
+          description={c.faq.description}
+        />
+        <Faq items={c.faq.items} />
+      </div>
+    </AnimatedSection>
   );
 }
 
@@ -371,7 +423,7 @@ function ServicesSection({ c }: { c: SiteContent }) {
             const Icon = iconMap[service.icon] ?? WandSparkles;
             return (
               <StaggerItem key={service.title} className="h-full">
-                <article className="depth-card h-full rounded-lg border border-white/10 bg-white/[0.045] p-5 transition duration-200 ease-out hover:border-white/35 hover:bg-white/[0.075]">
+                <MotionCard className="h-full rounded-lg border border-white/10 p-5 transition-colors duration-200 hover:border-white/40">
                   <div className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/[0.06] text-white">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </div>
@@ -381,7 +433,7 @@ function ServicesSection({ c }: { c: SiteContent }) {
                   <p className="mt-3 text-sm leading-6 text-zinc-300">
                     {service.description}
                   </p>
-                </article>
+                </MotionCard>
               </StaggerItem>
             );
           })}
@@ -406,7 +458,7 @@ function ProjectsSection({ c }: { c: SiteContent }) {
             const Icon = iconMap[project.icon] ?? Bot;
             return (
               <StaggerItem key={project.id} className="h-full">
-                <article className="group flex h-full min-h-full flex-col rounded-lg border border-white/10 bg-white/[0.045] p-5 transition duration-200 ease-out hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.07]">
+                <MotionCard className="flex h-full min-h-full flex-col rounded-lg border border-white/10 p-5 transition-colors duration-200 hover:border-white/30">
                   <div className="flex items-start justify-between gap-4">
                     <div className="grid h-11 w-11 place-items-center rounded-lg border border-white/10 bg-white/[0.06] text-white">
                       <Icon className="h-5 w-5" aria-hidden="true" />
@@ -442,7 +494,7 @@ function ProjectsSection({ c }: { c: SiteContent }) {
                     {c.projects.cta}
                     <ChevronRight className="h-4 w-4" aria-hidden="true" />
                   </a>
-                </article>
+                </MotionCard>
               </StaggerItem>
             );
           })}

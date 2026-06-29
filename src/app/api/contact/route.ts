@@ -14,7 +14,10 @@ type ContactPayload = {
   company?: string;
 };
 
-const FALLBACK_TO = "ludofootball@icloud.com";
+// Default delivery address. Override with CONTACT_TO_EMAIL only if needed.
+// With the shared onboarding sender, Resend only delivers to the account owner's
+// address (tchoupimr@gmail.com) until a custom domain is verified.
+const FALLBACK_TO = "tchoupimr@gmail.com";
 // Resend's shared onboarding sender works without verifying a domain.
 const FALLBACK_FROM = "17Lud Studio <onboarding@resend.dev>";
 

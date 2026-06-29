@@ -13,7 +13,7 @@ export const DEFAULT_CURRENCY: Currency = "eur";
 
 // Valeurs partagées entre les deux langues (évite la duplication / le décalage).
 const DISCORD = "17lud";
-const EMAIL = "ludofootball@icloud.com";
+const EMAIL = "tchoupimr@gmail.com";
 const NAME = "17Lud Studio";
 const SHORT = "17L";
 

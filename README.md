@@ -44,21 +44,21 @@ Le bouton FR / EN (en haut à droite) bascule l'ensemble du site.
 Le site propose trois canaux : le **formulaire** (envoi direct par email), Discord et email.
 
 - Discord : `17lud`
-- Email : `ludofootball@icloud.com`
+- Email : `tchoupimr@gmail.com`
 
 ### Activer l'envoi d'email du formulaire (Resend)
 
 Le formulaire fonctionne sans config (il bascule alors sur le fallback email/Discord).
 Pour qu'il t'envoie un vrai email :
 
-1. Crée un compte gratuit sur [resend.com](https://resend.com) avec `ludofootball@icloud.com`.
+1. Crée un compte gratuit sur [resend.com](https://resend.com) avec `tchoupimr@gmail.com`.
 2. Génère une API key sur [resend.com/api-keys](https://resend.com/api-keys).
 3. Ajoute `RESEND_API_KEY` dans `.env.local` (local) **et** dans Vercel
    (`Project > Settings > Environment Variables`), puis redéploie.
 
 Tant qu'aucun domaine n'est vérifié sur Resend, l'expéditeur partagé
 `onboarding@resend.dev` n'envoie qu'à l'adresse de ton compte Resend — d'où
-l'intérêt d'utiliser `ludofootball@icloud.com` à l'inscription. Voir
+l'intérêt d'utiliser `tchoupimr@gmail.com` à l'inscription. Voir
 `.env.local.example` pour `CONTACT_TO_EMAIL` et `CONTACT_FROM_EMAIL`.
 
 ## Verifications

@@ -244,6 +244,75 @@ select.appearance-none {
   animation: marquee 36s linear infinite;
 }
 
+/* Additive custom cursor ring (desktop only, transform set by JS). */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 9999px;
+  pointer-events: none;
+  opacity: 0;
+  z-index: 60;
+  mix-blend-mode: difference;
+  transition: opacity 0.2s ease;
+  will-change: transform;
+}
+
+/* Subtle film grain overlay. */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 36;
+  pointer-events: none;
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  background-size: 160px 160px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 1.2s steps(4) infinite;
+}
+
+@keyframes grain-shift {
+  0% {
+    background-position: 0 0;
+  }
+  25% {
+    background-position: -40px 20px;
+  }
+  50% {
+    background-position: 30px -40px;
+  }
+  75% {
+    background-position: -20px -30px;
+  }
+  100% {
+    background-position: 40px 30px;
+  }
+}
+
+/* Shine sweep on hover for dark CTAs. */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-shine::after {
+  position: absolute;
+  inset: 0;
+  content: "";
+  transform: translateX(-130%) skewX(-12deg);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
+  transition: transform 0.6s ease;
+}
+
+@media (hover: hover) {
+  .btn-shine:hover::after {
+    transform: translateX(130%) skewX(-12deg);
+  }
+}
+
 @media (hover: hover) and (pointer: fine) {
   .depth-card:hover {
     transform: perspective(900px) rotateX(3deg) rotateY(-4deg) translateY(-7px) translateZ(18px);

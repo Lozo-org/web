@@ -4,9 +4,12 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Analytics } from "@vercel/analytics/next";
 import { CurrencyProvider } from "@/components/site/currency-provider";
 import { LanguageProvider } from "@/components/site/language-provider";
+import { CustomCursor } from "@/components/site/custom-cursor";
+import { IntroPreloader } from "@/components/site/intro-preloader";
 import { ScrollProgress } from "@/components/site/scroll-progress";
 import { SpotlightCursor } from "@/components/site/spotlight-cursor";
 import { ToastProvider } from "@/components/site/toast";
+import { TransitionVeil } from "@/components/site/transition-veil";
 import { SITE_URL } from "@/lib/site-url";
 import "./globals.css";
 
@@ -107,10 +110,14 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
+        <IntroPreloader />
+        <div className="grain" aria-hidden="true" />
+        <CustomCursor />
         <LanguageProvider>
           <CurrencyProvider>
             <ScrollProgress />
             <SpotlightCursor />
+            <TransitionVeil />
             <ToastProvider>{children}</ToastProvider>
           </CurrencyProvider>
         </LanguageProvider>

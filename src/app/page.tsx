@@ -42,9 +42,13 @@ import { Faq } from "@/components/site/faq";
 import { FloatingContact } from "@/components/site/floating-contact";
 import { HeroScene } from "@/components/site/hero-scene";
 import { MotionCard } from "@/components/site/interactive-card";
+import { Magnetic } from "@/components/site/magnetic";
 import { Marquee } from "@/components/site/marquee";
+import { MusicToggle } from "@/components/site/music-toggle";
 import { Object3D } from "@/components/site/object-3d";
 import { RotatingText } from "@/components/site/rotating-text";
+import { ScrambleText } from "@/components/site/scramble-text";
+import { SplitText } from "@/components/site/split-text";
 import { CurrencyToggle } from "@/components/site/currency-toggle";
 import { useCurrency } from "@/components/site/currency-provider";
 import { LanguageToggle } from "@/components/site/language-toggle";
@@ -195,6 +199,7 @@ function Navbar({ c, active }: { c: SiteContent; active: string }) {
           >
             <Command className="h-3.5 w-3.5" aria-hidden="true" />K
           </button>
+          <MusicToggle />
           <LanguageToggle />
           <a
             href="#contact"
@@ -265,7 +270,7 @@ function Hero({ c }: { c: SiteContent }) {
           </StaggerItem>
           <StaggerItem>
             <h1 className="font-display text-4xl font-semibold leading-[1.12] sm:text-6xl lg:text-7xl">
-              <span className="text-white">{c.hero.titleLead}</span>{" "}
+              <SplitText text={c.hero.titleLead} className="text-white" />{" "}
               <RotatingText words={c.hero.rotating} className="text-premium" />
             </h1>
           </StaggerItem>
@@ -276,14 +281,18 @@ function Hero({ c }: { c: SiteContent }) {
           </StaggerItem>
           <StaggerItem>
             <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href="#projets" className={buttonVariants({ variant: "primary", size: "lg" })}>
-                {c.hero.primaryCta}
-                <ArrowRight className="h-5 w-5" aria-hidden="true" />
-              </a>
-              <a href="#contact" className={buttonVariants({ variant: "secondary", size: "lg" })}>
-                {c.hero.secondaryCta}
-                <MessageCircle className="h-5 w-5" aria-hidden="true" />
-              </a>
+              <Magnetic>
+                <a href="#projets" className={buttonVariants({ variant: "primary", size: "lg" })}>
+                  {c.hero.primaryCta}
+                  <ArrowRight className="h-5 w-5" aria-hidden="true" />
+                </a>
+              </Magnetic>
+              <Magnetic>
+                <a href="#contact" className={buttonVariants({ variant: "secondary", size: "lg" })}>
+                  {c.hero.secondaryCta}
+                  <MessageCircle className="h-5 w-5" aria-hidden="true" />
+                </a>
+              </Magnetic>
             </div>
           </StaggerItem>
         </StaggerGroup>
@@ -873,9 +882,11 @@ function SectionHeading({
 }) {
   return (
     <Reveal className={cn("max-w-3xl", align === "center" && "mx-auto text-center")}>
-      <p className="text-sm font-semibold uppercase text-zinc-300">{eyebrow}</p>
+      <p className="text-sm font-semibold uppercase text-zinc-300">
+        <ScrambleText text={eyebrow} />
+      </p>
       <h2 className="mt-3 font-display text-3xl font-semibold leading-[1.15] text-white sm:text-5xl">
-        {title}
+        <SplitText text={title} />
       </h2>
       <p className="mt-5 text-base leading-7 text-zinc-300 sm:text-lg">{description}</p>
     </Reveal>

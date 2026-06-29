@@ -4,6 +4,7 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CurrencyProvider } from "@/components/site/currency-provider";
 import { LanguageProvider } from "@/components/site/language-provider";
 import { ScrollProgress } from "@/components/site/scroll-progress";
+import { SpotlightCursor } from "@/components/site/spotlight-cursor";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -38,7 +39,10 @@ export const metadata: Metadata = {
     "bot moderation Discord",
     "bot esport Discord",
     "automatisation Discord",
-    "QUP MANA",
+    "QUP Mana",
+    "QUP Hubs",
+    "QUP Mans",
+    "QUP Core",
   ],
   openGraph: {
     title: "17Lud Studio - Bots Discord custom",
@@ -67,6 +71,7 @@ export default function RootLayout({
         <LanguageProvider>
           <CurrencyProvider>
             <ScrollProgress />
+            <SpotlightCursor />
             {children}
           </CurrencyProvider>
         </LanguageProvider>

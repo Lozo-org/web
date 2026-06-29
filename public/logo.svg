@@ -15,6 +15,6 @@
   <circle cx="35.4" cy="15.6" r="1.7" fill="#ffffff" />
   <text x="24" y="25" text-anchor="middle" dominant-baseline="central" font-family="'Geist','Segoe UI',Arial,sans-serif" font-size="15" font-weight="700" letter-spacing="0.4" fill="url(#chrome)">17L</text>
   <text x="58" y="25" dominant-baseline="central" font-family="'Geist','Segoe UI',Arial,sans-serif" font-size="20" font-weight="700">
-    <tspan fill="#ffffff">17Lud</tspan><tspan fill="#a1a1aa"> Studio</tspan>
+    <tspan fill="#ffffff">17Lud</tspan><tspan fill="#a1a1aa" dx="6">Studio</tspan>
   </text>
 </svg>

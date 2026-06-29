@@ -45,6 +45,8 @@ export type PriceTier = {
   cta: string;
 };
 export type ProcessStep = { title: string; text: string };
+export type Metric = { value: number; suffix: string; label: string };
+export type FaqItem = { q: string; a: string };
 
 export type FormContent = {
   name: string;
@@ -89,12 +91,16 @@ export type SiteContent = {
   hero: {
     badge: string;
     title: string;
+    titleLead: string;
+    rotating: string[];
     description: string;
     primaryCta: string;
     secondaryCta: string;
     scroll: string;
   };
   stats: Stat[];
+  metrics: Metric[];
+  marquee: string[];
   about: {
     eyebrow: string;
     title: string;
@@ -160,6 +166,12 @@ export type SiteContent = {
     bannerTitle: string;
     bannerCta: string;
   };
+  faq: {
+    eyebrow: string;
+    title: string;
+    description: string;
+    items: FaqItem[];
+  };
   footer: {
     tagline: string;
     rights: string;
@@ -194,11 +206,22 @@ const fr: SiteContent = {
     { label: "Projets", href: "#projets" },
     { label: "Tarifs", href: "#tarifs" },
     { label: "Processus", href: "#processus" },
+    { label: "FAQ", href: "#faq" },
     { label: "Contact", href: "#contact" },
   ],
   hero: {
     badge: "Développeur de systèmes Discord",
     title: "Je crée des bots Discord sur mesure, modernes et puissants.",
+    titleLead: "Je crée des bots Discord sur mesure pour",
+    rotating: [
+      "la modération.",
+      "l'esport.",
+      "le RP.",
+      "ta communauté.",
+      "tes tickets.",
+      "l'IA.",
+      "ton serveur.",
+    ],
     description:
       "Développement de bots Discord personnalisés pour communautés, serveurs RP, projets esport, entreprises et créateurs.",
     primaryCta: "Voir mes projets",
@@ -209,6 +232,30 @@ const fr: SiteContent = {
     { label: "Identité", value: "Portfolio perso" },
     { label: "Spécialité", value: "Bots Discord" },
     { label: "Approche", value: "Sur mesure" },
+  ],
+  metrics: [
+    { value: 13, suffix: "+", label: "types de bots" },
+    { value: 4, suffix: "", label: "projets exemples" },
+    { value: 100, suffix: "%", label: "sur mesure" },
+    { value: 48, suffix: "h", label: "réponse max" },
+  ],
+  marquee: [
+    "Discord.js",
+    "Node.js",
+    "Slash commands",
+    "Modération",
+    "Tickets",
+    "Logs",
+    "AutoMod",
+    "IA",
+    "Base de données",
+    "Webhooks",
+    "Boutons & menus",
+    "Esport",
+    "RP",
+    "Automatisation",
+    "Hébergement",
+    "Maintenance",
   ],
   about: {
     eyebrow: "À propos",
@@ -326,7 +373,7 @@ const fr: SiteContent = {
     items: [
       {
         id: "mana",
-        name: "QUP MANA",
+        name: "QUP Mana",
         type: "Gestion, modération et automatisation",
         icon: "shield",
         description:
@@ -345,8 +392,8 @@ const fr: SiteContent = {
         ],
       },
       {
-        id: "commu",
-        name: "QUP Commu",
+        id: "hubs",
+        name: "QUP Hubs",
         type: "Communautaire",
         icon: "community",
         description: "Bot orienté animation, interaction et vie de communauté.",
@@ -361,7 +408,7 @@ const fr: SiteContent = {
       },
       {
         id: "mans",
-        name: "QUP MANS",
+        name: "QUP Mans",
         type: "Compétitif",
         icon: "trophy",
         description: "Bot compétitif pour organiser des matchs esport facilement.",
@@ -377,7 +424,7 @@ const fr: SiteContent = {
       },
       {
         id: "core",
-        name: "QUP CORE",
+        name: "QUP Core",
         type: "Suivi et communication",
         icon: "core",
         description:
@@ -560,6 +607,38 @@ const fr: SiteContent = {
       "Envoie-moi ton idée, je regarde comment la transformer en bot concret.",
     bannerCta: "Envoyer un email",
   },
+  faq: {
+    eyebrow: "FAQ",
+    title: "Les questions qu'on me pose le plus souvent.",
+    description:
+      "Tout ce qu'il faut savoir avant de lancer ton projet de bot Discord.",
+    items: [
+      {
+        q: "Combien de temps pour développer un bot ?",
+        a: "Ça dépend des modules : un module simple se livre en quelques jours, un bot complet en 1 à 3 semaines. Je te donne un délai clair dès le cadrage.",
+      },
+      {
+        q: "Est-ce que tu héberges le bot ?",
+        a: "Je t'aide à le déployer et à l'héberger (VPS, services cloud…). Je peux aussi te laisser la main complète sur ton propre hébergement.",
+      },
+      {
+        q: "Je peux modifier le bot après la livraison ?",
+        a: "Oui. Le code est propre et évolutif, et chaque offre inclut une période d'ajustements. Tu peux aussi prendre de la maintenance ensuite.",
+      },
+      {
+        q: "Le code m'appartient ?",
+        a: "Oui : tu reçois le code source de ton bot et tu en es propriétaire.",
+      },
+      {
+        q: "Tu fais quels types de serveurs ?",
+        a: "Communauté, esport/gaming, RP, entreprise… Le bot est pensé autour de TON serveur, pas un template générique.",
+      },
+      {
+        q: "Comment se passe le paiement ?",
+        a: "Devis gratuit, puis paiement une fois le cahier des charges validé. On cadre tout avant de commencer.",
+      },
+    ],
+  },
   footer: {
     tagline: "Créateur de bots Discord custom",
     rights: "Tous droits réservés.",
@@ -594,11 +673,22 @@ const en: SiteContent = {
     { label: "Projects", href: "#projets" },
     { label: "Pricing", href: "#tarifs" },
     { label: "Process", href: "#processus" },
+    { label: "FAQ", href: "#faq" },
     { label: "Contact", href: "#contact" },
   ],
   hero: {
     badge: "Discord systems developer",
     title: "I build custom Discord bots — modern, clean and powerful.",
+    titleLead: "I build custom Discord bots for",
+    rotating: [
+      "moderation.",
+      "esports.",
+      "roleplay.",
+      "your community.",
+      "tickets.",
+      "AI.",
+      "your server.",
+    ],
     description:
       "Custom Discord bot development for communities, RP servers, esport projects, businesses and creators.",
     primaryCta: "View my projects",
@@ -609,6 +699,30 @@ const en: SiteContent = {
     { label: "Identity", value: "Personal portfolio" },
     { label: "Focus", value: "Discord bots" },
     { label: "Approach", value: "Fully custom" },
+  ],
+  metrics: [
+    { value: 13, suffix: "+", label: "bot types" },
+    { value: 4, suffix: "", label: "example projects" },
+    { value: 100, suffix: "%", label: "custom-built" },
+    { value: 48, suffix: "h", label: "max reply time" },
+  ],
+  marquee: [
+    "Discord.js",
+    "Node.js",
+    "Slash commands",
+    "Moderation",
+    "Tickets",
+    "Logs",
+    "AutoMod",
+    "AI",
+    "Database",
+    "Webhooks",
+    "Buttons & menus",
+    "Esport",
+    "RP",
+    "Automation",
+    "Hosting",
+    "Maintenance",
   ],
   about: {
     eyebrow: "About",
@@ -724,7 +838,7 @@ const en: SiteContent = {
     items: [
       {
         id: "mana",
-        name: "QUP MANA",
+        name: "QUP Mana",
         type: "Management, moderation and automation",
         icon: "shield",
         description:
@@ -743,8 +857,8 @@ const en: SiteContent = {
         ],
       },
       {
-        id: "commu",
-        name: "QUP Commu",
+        id: "hubs",
+        name: "QUP Hubs",
         type: "Community",
         icon: "community",
         description: "Bot focused on animation, interaction and community life.",
@@ -759,7 +873,7 @@ const en: SiteContent = {
       },
       {
         id: "mans",
-        name: "QUP MANS",
+        name: "QUP Mans",
         type: "Competitive",
         icon: "trophy",
         description: "Competitive bot to organise esport matches easily.",
@@ -775,7 +889,7 @@ const en: SiteContent = {
       },
       {
         id: "core",
-        name: "QUP CORE",
+        name: "QUP Core",
         type: "Tracking and communication",
         icon: "core",
         description:
@@ -949,6 +1063,38 @@ const en: SiteContent = {
     bannerEyebrow: "Your next Discord system",
     bannerTitle: "Send me your idea — I'll look at how to turn it into a real bot.",
     bannerCta: "Send an email",
+  },
+  faq: {
+    eyebrow: "FAQ",
+    title: "The questions I get asked the most.",
+    description:
+      "Everything you need to know before starting your Discord bot project.",
+    items: [
+      {
+        q: "How long does a bot take to build?",
+        a: "It depends on the modules: a simple module ships in a few days, a full bot in 1–3 weeks. I give you a clear timeline during scoping.",
+      },
+      {
+        q: "Do you host the bot?",
+        a: "I help you deploy and host it (VPS, cloud services…). I can also hand you full control of your own hosting.",
+      },
+      {
+        q: "Can I change the bot after delivery?",
+        a: "Yes. The code is clean and scalable, and every offer includes an adjustment period. You can also take maintenance afterwards.",
+      },
+      {
+        q: "Do I own the code?",
+        a: "Yes: you get your bot's source code and you own it.",
+      },
+      {
+        q: "What kinds of servers do you handle?",
+        a: "Community, esport/gaming, RP, business… The bot is designed around YOUR server, not a generic template.",
+      },
+      {
+        q: "How does payment work?",
+        a: "Free quote, then payment once the spec is agreed. We scope everything before starting.",
+      },
+    ],
   },
   footer: {
     tagline: "Custom Discord bot developer",

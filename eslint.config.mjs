@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Local AI tooling (UI/UX Pro Max skill scripts, etc.) — not part of the app.
+    ".claude/**",
   ]),
 ]);
 

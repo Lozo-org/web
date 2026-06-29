@@ -33,7 +33,7 @@ Le bouton FR / EN (en haut à droite) bascule l'ensemble du site.
 - **Tarifs** : `src/lib/site-content.ts`, `pricing.tiers` (montants, devise, features, badge "featured").
 - **Traductions** : modifie les objets `fr` et `en` côte à côte. La langue par défaut est `DEFAULT_LOCALE`.
 - **Formulaire de contact** : `src/components/site/contact-form.tsx` (UI) et `src/app/api/contact/route.ts` (envoi email).
-- Photo de profil : remplace `public/images/profile.svg` par ta photo (même nom, ou change l'URL dans la section About de `src/app/page.tsx`).
+- Photo de profil : `public/images/profile.jpg` (remplace ce fichier par ta photo, ou change l'URL dans la section About de `src/app/page.tsx`).
 - Hero 3D : `src/components/site/hero-scene.tsx`.
 - Animations : `src/components/site/reveal.tsx`, `animated-section.tsx`, `scroll-progress.tsx`.
 - Configuration 21st.dev : `src/lib/magic-21st.ts` et `.env.local`.

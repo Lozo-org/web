@@ -159,7 +159,7 @@ select {
   filter: blur(8px);
 }
 
-/* Profile portrait frame (swap the image in public/images/profile.svg). */
+/* Profile portrait frame (swap the image in public/images/profile.jpg). */
 .profile-portrait {
   background-size: cover;
   background-position: center;

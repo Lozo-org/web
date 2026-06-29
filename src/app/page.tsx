@@ -293,7 +293,7 @@ function AboutSection({ c }: { c: SiteContent }) {
         <Reveal className="lg:sticky lg:top-24">
           <div
             className="profile-portrait depth-card aspect-square w-full rounded-2xl border border-white/12"
-            style={{ backgroundImage: "url('/images/profile.svg')" }}
+            style={{ backgroundImage: "url('/images/profile.jpg')" }}
             role="img"
             aria-label={c.about.profileAlt}
           >
